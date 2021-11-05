@@ -1,0 +1,29 @@
+{
+  "name": "wikixl/multiversion",
+  "license": "Apache-2.0",
+  "keywords": [
+    "SimpleSamlPHP", "multiversion", "configuration"
+  ],
+  "description": "Enables SimpleSamlPHP MultiVersion behavior. Easily configures multi domains on one codebase.",
+  "require": {
+    "php": "^7",
+    "symfony/yaml": "^4.4"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^7.5"
+  },
+  "authors": [
+    {
+      "name": "Youri van den Bogert",
+      "email": "yvdbogert@archixl.nl"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "WikiXL\\MultiVersion\\": "src/"
+    }
+  },
+  "scripts": {
+    "test-multiversion": "vendor/bin/phpunit --colors=always --verbose tests/"
+  }
+}

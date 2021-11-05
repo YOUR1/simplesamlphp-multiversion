@@ -1,0 +1,36 @@
+---
+top_domain: "test.nl"
+use_ssl: yes
+modules:
+  cron:
+    key: "asdbnasdasd"
+    allowed_tags:
+      - daily
+      - hourly
+      - frequent
+    debug_message: true
+    sendmail: false
+## Define a list of available environments for this domain.
+## The environment is in fact a subdomain on the top domain.
+##
+## E.g. test: samltest becomes samltest.wikixl.nl
+environments:
+  dev: "samldev"
+  test: "samltest"
+  prod: "saml"
+## Override default configuration
+config:
+  auth:
+    adminpassword: "qwerty12345790"
+  session:
+    cookie:
+      domain: ".test.nl"
+  ## This should actually be done automatically... in the end.. but it doesn't
+  ## for now..
+  metadata:
+    sources:
+      - type: "flatfile"
+      - type: "flatfile"
+        directory: "metadata/federation/some-sp"
+      - type: "flatfile"
+        directory: "metadata/federation/another-sp"

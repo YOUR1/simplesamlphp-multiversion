@@ -1,0 +1,46 @@
+---
+metarefresh:
+  basedir: "metadata/federation"
+authsources:
+  some-sp:
+    config:
+      '0': saml:SP
+      privatekey: saml.key
+      certificate: saml.crt
+      idp:
+        test: "https://some-sp-test-url.com"
+        prod: "https://some-sp-prod-url.com"
+      authproc:
+        '10':
+          '0': urn2name
+          class: core:AttributeMap
+        '20':
+          class: saml:NameIDAttribute
+          format: "%V"
+    metarefresh:
+      cron: hourly
+      test: "https://metadata.test.test.nl/idp-metadata.xml"
+      prod: "https://metadata.prod.test.nl/idp-metadata.xml"
+  another-sp:
+    config:
+      0: saml:SP
+      idp:
+        test: "https://sts.windows.net/bcea53ca-527b-486b-a115-a33c3db3cc9e/"
+        prod: "https://sts.windows.net/bcea53ca-527b-486b-a115-a33c3db3cc9e/"
+      discoURL:
+      NameIDPolicy: urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified
+      simplesaml.nameidattribute: email
+      privatekey: saml.key
+      certificate: saml.crt
+      authproc:
+        50:
+          0: adfs2wikixl
+          class: core:AttributeMap
+      sign.logout: true
+      redirect.sign: true
+      assertion.encryption: false
+      signature.algorithm: http://www.w3.org/2001/04/xmldsig-more#rsa-sha256
+    metarefresh:
+      cron: hourly
+      test: "https://login.microsoftonline.com/bcea53ca-527b-486b-a195-a34c3db3cc9e/federationmetadata/2007-06/federationmetadata.xml?appid=8e3c18fb-9ba3-4b77-999b-ff4cccaa8797"
+      prod: "https://login.microsoftonline.com/bcea53ca-527b-486b-a195-a34c3db3cc9e/federationmetadata/2007-06/federationmetadata.xml?appid=5b6d8edc-c6bd-4c4e-ae92-e1e9ab9a461c"
