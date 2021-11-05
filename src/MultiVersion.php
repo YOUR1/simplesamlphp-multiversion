@@ -164,11 +164,26 @@ class MultiVersion {
 
 		// Loop over all auth sources to retrieve the identifier and config object itself
 		foreach ( $authsources as $authsourceIdentifier => $authsourceConfigObjects ) {
+			// The auth source must have the metarefersh attribute
+			// otherwise it's not needed to refresh
+			if ( ! isset ( $authsourceConfigObjects[ 'metarefresh' ]) ) {
+				continue;
+			}
+
 			$metaRefreshConfiguration = $authsourceConfigObjects[ 'metarefresh' ];
+
+			// If only one value was passed to the cron string; make it an array
+			$cronConfiguration = is_string($metaRefreshConfiguration[ 'cron' ])
+				? [ $metaRefreshConfiguration[ 'cron' ] ]
+				: $metaRefreshConfiguration[ 'cron' ];
+
+			// Finally build up the set
 			$config[ 'sets' ][ $authsourceIdentifier ] = [
-				'cron' => $metaRefreshConfiguration[ 'cron' ],
+				'cron' => $cronConfiguration,
 				'sources' => [
-					$metaRefreshConfiguration[ $environment ]
+					[
+						'src' => $metaRefreshConfiguration[ $environment ]
+					]
 				],
 				'expireAfter' => 60*60,
 				'outputDir' => $defaultOutputDir . '/' . $authsourceIdentifier
@@ -322,3 +337,4 @@ class MultiVersion {
 		return self::$instance;
 	}
 }
+

@@ -33,9 +33,9 @@ class ConfigTest extends TestCase {
 		$this->assertArrayHasKey( 'sets', $configObjectRetrieved );
 		$this->assertCount(2, $configObjectRetrieved[ 'sets' ] );
 		$this->assertEquals([
-			'cron' => 'hourly',
+			'cron' => [ 'hourly' ],
 			'sources' => [
-				'https://metadata.prod.test.nl/idp-metadata.xml'
+				[ 'src' => 'https://metadata.prod.test.nl/idp-metadata.xml' ]
 			],
 			'expireAfter' => 60*60,
 			'outputDir' => 'metadata/federation/some-sp'
@@ -61,3 +61,4 @@ class ConfigTest extends TestCase {
 	}
 
 }
+
