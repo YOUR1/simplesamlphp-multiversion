@@ -6,6 +6,6 @@
  * @global string $MVEnvironment
  * @global \WikiXL\MultiVersion\MultiVersion $multiVersionInstance
  */
-require_once dirname( __FILE__ ) . '/multiversion.php';
+include dirname( __FILE__ ) . '/multiversion.php';
 
 $config = $multiVersionInstance->getMainConfig( $MVEnvironment );
