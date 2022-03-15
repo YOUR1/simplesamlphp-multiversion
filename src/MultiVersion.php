@@ -287,7 +287,7 @@ class MultiVersion {
 
 		$useSsl = $this->yamlMainConfig[ 'use_ssl' ] ?? true;
 		$environment = $this->yamlMainConfig[ 'environments' ][ $environment ];
-		$topDomain = $this->yamlMainConfig[ 'top_domain' ];
+		$topDomain = $this->yamlMainConfig[ 'config_' . $environment ]['top_domain'] ?? $this->yamlMainConfig[ 'top_domain' ];
 
 		return ( $useSsl ? "https" : "http" ) . "://{$environment}.$topDomain";
 
