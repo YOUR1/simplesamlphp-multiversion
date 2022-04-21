@@ -34,19 +34,17 @@ class MultiVersion {
 	/**
 	 * @param string $defaultConfigFile
 	 * @param string $yamlConfigDirectory
-	 *
-	 * @throws \Exception
 	 */
 	public function __construct( string $defaultConfigFile, string $yamlConfigDirectory ) {
 
 		if ( ! file_exists( $defaultConfigFile ) ) {
-			throw new \Exception(
+			\SimpleSAML\Logger::error(
 				"Default configuration file ({$defaultConfigFile}) could not be found."
 			);
 		}
 
 		if ( ! is_dir( $yamlConfigDirectory ) ) {
-			throw new \Exception(
+			\SimpleSAML\Logger::error(
 				"Given directory ({$yamlConfigDirectory}} does not exist."
 			);
 		}
@@ -55,13 +53,13 @@ class MultiVersion {
 		$yamlAuthsourcesFile = $yamlConfigDirectory . DIRECTORY_SEPARATOR . "authsources.yaml";
 
 		if ( ! file_exists( $yamlConfigFile ) ) {
-			throw new \Exception(
+			\SimpleSAML\Logger::error(
 				"Yaml configuration file ({$$yamlConfigFile}) could not be found."
 			);
 		}
 
 		if ( ! file_exists( $yamlAuthsourcesFile ) ) {
-			throw new \Exception(
+			\SimpleSAML\Logger::error(
 				"Yaml authsources configuration file ({$yamlAuthsourcesFile}) could not be found."
 			);
 		}
@@ -87,12 +85,10 @@ class MultiVersion {
 	 * to configure.
 	 *
 	 * This checks both the main and auth sources config files.
-	 *
-	 * @throws \Exception
 	 */
 	private function validateYamlConfigState() : void {
 		if ( empty( $this->yamlMainConfig ) || empty ( $this->yamlAuthsourcesConfig ) ) {
-			throw new \Exception(
+			\SimpleSAML\Logger::error(
 				"Configuration missmatch. The YAML configuration container is empty."
 			);
 		}
@@ -105,7 +101,6 @@ class MultiVersion {
 	 * @global $config
 	 *
 	 * @return array
-	 * @throws \Exception
 	 */
 	public function getMainConfig( string $environment = null ) : array {
 		// Validate config state
@@ -144,7 +139,6 @@ class MultiVersion {
 	 * @param string|null $environment
 	 *
 	 * @return array|array[]
-	 * @throws \Exception
 	 */
 	public function getMetaRefreshConfig( string $environment = null ) : array {
 		// Validate config state
@@ -200,7 +194,6 @@ class MultiVersion {
 	 * @param string|null $environment
 	 *
 	 * @return array
-	 * @throws \Exception
 	 */
 	public function getAuthSourcesConfig( string $environment = null ) : array {
 		// Validate config state
@@ -236,7 +229,6 @@ class MultiVersion {
 	 * Returns the compiled module_cron.php configuration object.
 	 *
 	 * @return array
-	 * @throws \Exception
 	 */
 	public function getCronConfig() : array {
 		// Validate config state
@@ -245,7 +237,7 @@ class MultiVersion {
 		// We need an actual config object to make this thing work
 		$cronConfig = $this->yamlMainConfig[ 'modules' ][ 'cron' ] ?? false;
 		if ( ! $cronConfig ) {
-			throw new \Exception(
+			\SimpleSAML\Logger::error(
 				"There was no cron configuration."
 			);
 		}
@@ -258,7 +250,7 @@ class MultiVersion {
 		// The key and allowed_tags are mandatory for the cron module to work
 		// so lets require them
 		if ( ! $cronKey || ! $allowedTags ) {
-			throw new \Exception(
+			\SimpleSAML\Logger::error(
 				"Cron configuration is missing key or allowed_tags."
 			);
 		}
@@ -275,12 +267,11 @@ class MultiVersion {
 	 * @param string $environment
 	 *
 	 * @return string
-	 * @throws \Exception
 	 */
 	private function getBaseUrlPath( string $environment ) : string {
 
 		if ( ! isset( $this->yamlMainConfig[ 'environments' ][ $environment ] ) ) {
-			throw new \Exception(
+			\SimpleSAML\Logger::error(
 				"Environment: $environment is not configured."
 			);
 		}
@@ -328,7 +319,6 @@ class MultiVersion {
 	 * @param string $yamlConfigurationDirectory
 	 *
 	 * @return MultiVersion
-	 * @throws \Exception
 	 */
 	public static function factory( string $defaultConfig, string $yamlConfigurationDirectory ) : MultiVersion {
 		if ( !isset ( self::$instance ) ) {
