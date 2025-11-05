@@ -24,6 +24,6 @@
     }
   },
   "scripts": {
-    "test-multiversion": "vendor/bin/phpunit --colors=always --verbose tests/"
+    "test-multiversion": "vendor/bin/phpunit --colors=always tests/"
   }
 }

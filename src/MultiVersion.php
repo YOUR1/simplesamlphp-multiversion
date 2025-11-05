@@ -102,7 +102,7 @@ class MultiVersion {
 	 *
 	 * @return array
 	 */
-	public function getMainConfig( string $environment = null ) : array {
+	public function getMainConfig( ?string $environment = null ) : array {
 		// Validate config state
 		$this->validateYamlConfigState();
 
@@ -140,7 +140,7 @@ class MultiVersion {
 	 *
 	 * @return array|array[]
 	 */
-	public function getMetaRefreshConfig( string $environment = null ) : array {
+	public function getMetaRefreshConfig( ?string $environment = null ) : array {
 		// Validate config state
 		$this->validateYamlConfigState();
 
@@ -195,7 +195,7 @@ class MultiVersion {
 	 *
 	 * @return array
 	 */
-	public function getAuthSourcesConfig( string $environment = null ) : array {
+	public function getAuthSourcesConfig( ?string $environment = null ) : array {
 		// Validate config state
 		$this->validateYamlConfigState();
 
