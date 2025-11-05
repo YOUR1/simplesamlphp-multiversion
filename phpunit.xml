@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="tests/bootstrap.php"
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
          colors="true"
          stopOnFailure="false"
          failOnWarning="false"
@@ -9,11 +11,15 @@
             <directory>tests</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
+    <coverage processUncoveredFiles="true">
+        <include>
             <directory suffix=".php">src</directory>
-        </whitelist>
-    </filter>
+        </include>
+        <report>
+            <text outputFile="php://stdout"/>
+            <clover outputFile="coverage.xml"/>
+        </report>
+    </coverage>
     <php>
         <ini name="error_reporting" value="-1"/>
         <ini name="display_errors" value="1"/>
