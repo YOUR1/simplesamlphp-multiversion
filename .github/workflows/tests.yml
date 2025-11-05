@@ -18,14 +18,17 @@ jobs:
         symfony: ['4.4.*', '5.4.*', '6.4.*', '7.0.*']
         dependency-version: [prefer-lowest, prefer-stable]
         exclude:
-          # Symfony 6+ requires PHP 8.1+
+          # Symfony 6.4 requires PHP 8.1+
           - php: '7.4'
             symfony: '6.4.*'
           - php: '8.0'
             symfony: '6.4.*'
+          # Symfony 7.0 requires PHP 8.2+
           - php: '7.4'
             symfony: '7.0.*'
           - php: '8.0'
+            symfony: '7.0.*'
+          - php: '8.1'
             symfony: '7.0.*'
           # Symfony 5.4 requires PHP 7.2.5+, but doesn't support PHP 8.3
           - php: '8.3'
@@ -64,6 +67,10 @@ jobs:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
           restore-keys: ${{ runner.os }}-composer-
+
+      - name: Constrain PHPUnit version for PHP 8.1
+        if: matrix.php == '8.1'
+        run: composer require "phpunit/phpunit:^9.0" --no-interaction --no-update --dev
 
       - name: Install Composer dependencies
         run: |
@@ -148,7 +155,7 @@ jobs:
         run: vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
 
       - name: Upload coverage to artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage.xml
