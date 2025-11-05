@@ -1,0 +1,161 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  test:
+    name: PHP ${{ matrix.php }} - Symfony ${{ matrix.symfony }} - ${{ matrix.dependency-version }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.4', '8.0', '8.1', '8.2', '8.3']
+        symfony: ['4.4.*', '5.4.*', '6.4.*', '7.0.*']
+        dependency-version: [prefer-lowest, prefer-stable]
+        exclude:
+          # Symfony 6.4 requires PHP 8.1+
+          - php: '7.4'
+            symfony: '6.4.*'
+          - php: '8.0'
+            symfony: '6.4.*'
+          # Symfony 7.0 requires PHP 8.2+
+          - php: '7.4'
+            symfony: '7.0.*'
+          - php: '8.0'
+            symfony: '7.0.*'
+          - php: '8.1'
+            symfony: '7.0.*'
+          # Symfony 5.4 requires PHP 7.2.5+, but doesn't support PHP 8.3
+          - php: '8.3'
+            symfony: '5.4.*'
+          # Symfony 4.4 only supports up to PHP 8.0
+          - php: '8.1'
+            symfony: '4.4.*'
+          - php: '8.2'
+            symfony: '4.4.*'
+          - php: '8.3'
+            symfony: '4.4.*'
+          # PHPUnit compatibility issues with prefer-lowest on newer PHP
+          - php: '8.2'
+            dependency-version: prefer-lowest
+          - php: '8.3'
+            dependency-version: prefer-lowest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
+          coverage: none
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Constrain PHPUnit version for older PHP versions
+        if: matrix.php == '7.4' || matrix.php == '8.0' || matrix.php == '8.1'
+        run: composer require "phpunit/phpunit:^9.0" --no-interaction --no-update --dev
+
+      - name: Install Composer dependencies
+        run: |
+          composer require "symfony/yaml:${{ matrix.symfony }}" --no-interaction --no-update
+          composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-progress
+
+      - name: Execute tests
+        run: composer test-multiversion
+
+  compatibility-check:
+    name: SimpleSAMLphp Compatibility - ${{ matrix.simplesamlphp }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # SimpleSAMLphp 1.x (PHP 7.1+, Symfony 3.4/4.4)
+          - simplesamlphp: '1.19.*'
+            php: '7.4'
+            symfony: '4.4.*'
+          # SimpleSAMLphp 2.0-2.3 (PHP 7.4/8.0/8.1, Symfony 5.4/6.0)
+          - simplesamlphp: '2.0.*'
+            php: '8.0'
+            symfony: '5.4.*'
+          - simplesamlphp: '2.1.*'
+            php: '8.1'
+            symfony: '6.0.*'
+          # SimpleSAMLphp 2.4.3 (PHP 8.1+, Symfony 6.4)
+          - simplesamlphp: '2.4.3'
+            php: '8.1'
+            symfony: '6.4.*'
+          - simplesamlphp: '2.4.3'
+            php: '8.2'
+            symfony: '6.4.*'
+          - simplesamlphp: '2.4.3'
+            php: '8.3'
+            symfony: '6.4.*'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
+          coverage: none
+
+      - name: Install dependencies for SimpleSAMLphp ${{ matrix.simplesamlphp }}
+        run: |
+          composer require "symfony/yaml:${{ matrix.symfony }}" --no-interaction --no-update
+          composer update --prefer-stable --prefer-dist --no-interaction --no-progress
+
+      - name: Execute tests
+        run: composer test-multiversion
+
+      - name: Report compatibility
+        if: success()
+        run: echo "✅ Compatible with SimpleSAMLphp ${{ matrix.simplesamlphp }} on PHP ${{ matrix.php }}"
+
+  code-coverage:
+    name: Code Coverage
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: dom, curl, libxml, mbstring, zip
+          coverage: xdebug
+
+      - name: Install dependencies
+        run: composer update --prefer-stable --prefer-dist --no-interaction --no-progress
+
+      - name: Execute tests with coverage
+        run: vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
+
+      - name: Upload coverage to artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml

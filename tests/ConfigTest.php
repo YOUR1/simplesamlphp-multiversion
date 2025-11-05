@@ -1,8 +1,6 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
-require_once dirname( __FILE__ ) . "/../vendor/autoload.php";
-
 class ConfigTest extends TestCase {
 
 	/**
