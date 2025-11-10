@@ -79,7 +79,8 @@ class MultiVersionTest extends TestCase {
 				['src' => 'https://metadata.test.test.nl/idp-metadata.xml']
 			],
 			'expireAfter' => 60 * 60,
-			'outputDir' => 'metadata/federation/some-sp'
+			'outputDir' => 'metadata/federation/some-sp',
+			'outputFormat' => 'flatfile'
 		], $configObjectRetrieved['sets']['some-sp']);
 	}
 
