@@ -180,7 +180,8 @@ class MultiVersion {
 					]
 				],
 				'expireAfter' => 60*60,
-				'outputDir' => $defaultOutputDir . '/' . $authsourceIdentifier
+				'outputDir' => $defaultOutputDir . '/' . $authsourceIdentifier,
+				'outputFormat' => 'flatfile'
 			];
 		}
 
