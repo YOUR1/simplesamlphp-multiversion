@@ -95,6 +95,11 @@ class MultiVersionTest extends TestCase {
 		// Verify IDP is correctly set for production
 		$this->assertEquals('https://some-sp-prod-url.com', $configObjectRetrieved['some-sp']['idp']);
 		$this->assertEquals('https://sts.windows.net/bcea53ca-527b-486b-a115-a33c3db3cc9e/', $configObjectRetrieved['another-sp']['idp']);
+
+		// Verify entityID is correctly set for production
+		$this->assertEquals('https://some-sp-prod-entityid.com', $configObjectRetrieved['some-sp']['entityID']);
+		$this->assertEquals('https://login.microsoftonline.com/bcea53ca-527b-486', $configObjectRetrieved['another-sp']['entityID']);
+	
 	}
 
 	public function testAuthSourcesConfigTest() {
