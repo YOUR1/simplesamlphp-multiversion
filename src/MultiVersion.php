@@ -172,17 +172,19 @@ class MultiVersion {
 				: $metaRefreshConfiguration[ 'cron' ];
 
 			// Finally build up the set
-			$config[ 'sets' ][ $authsourceIdentifier ] = [
-				'cron' => $cronConfiguration,
-				'sources' => [
-					[
-						'src' => $metaRefreshConfiguration[ $environment ]
-					]
-				],
-				'expireAfter' => 60*60,
-				'outputDir' => $defaultOutputDir . '/' . $authsourceIdentifier,
-				'outputFormat' => 'flatfile'
-			];
+			if ( isset( $metaRefreshConfiguration[ $environment] ) ) {
+				$config[ 'sets' ][ $authsourceIdentifier ] = [
+					'cron' => $cronConfiguration,
+					'sources' => [
+						[
+							'src' => $metaRefreshConfiguration[ $environment ]
+						]
+					],
+					'expireAfter' => 60*60,
+					'outputDir' => $defaultOutputDir . '/' . $authsourceIdentifier,
+					'outputFormat' => 'flatfile'
+				];
+			}
 		}
 
 		return $config;
@@ -211,12 +213,18 @@ class MultiVersion {
 		// Loop over all auth sources to retrieve the identifier and config object itself
 		foreach ( $authsources as $authsourceIdentifier => $authsourceConfigObjects ) {
 			$authSourceConfig = $authsourceConfigObjects['config'] ?? false;
-			// The IDP key needs to have the current environment as value; otherwise we can't properly
+			// The IDP and entityID key needs to have the current environment as value; otherwise we can't properly
 			// configure this authsource. Thus check if it's set, and also validate the config
 			// object itself.
 			if ( isset ( $authSourceConfig[ 'idp' ][ $environment ] ) && $authSourceConfig ) {
 				// Override the IDP key with the current environment.
 				$authSourceConfig[ 'idp' ] = $authSourceConfig[ 'idp' ][ $environment ];
+				// Finally append the config object.
+				$config[ $authsourceIdentifier ] = $authSourceConfig;
+			}
+			if ( isset ( $authSourceConfig[ 'entityID' ][ $environment ] ) && $authSourceConfig ) {
+				// Override the entityID key with the current environment.
+				$authSourceConfig[ 'entityID' ] = $authSourceConfig[ 'entityID' ][ $environment ];
 				// Finally append the config object.
 				$config[ $authsourceIdentifier ] = $authSourceConfig;
 			}
