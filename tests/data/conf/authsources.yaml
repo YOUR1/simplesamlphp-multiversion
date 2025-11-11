@@ -10,6 +10,9 @@ authsources:
       idp:
         test: "https://some-sp-test-url.com"
         prod: "https://some-sp-prod-url.com"
+      entityID:
+        test: "https://some-sp-test-entityid.com"
+        prod: "https://some-sp-prod-entityid.com"
       authproc:
         '10':
           '0': urn2name
@@ -27,6 +30,9 @@ authsources:
       idp:
         test: "https://sts.windows.net/bcea53ca-527b-486b-a115-a33c3db3cc9e/"
         prod: "https://sts.windows.net/bcea53ca-527b-486b-a115-a33c3db3cc9e/"
+      entityID:
+        test: "https://login.microsoftonline.com/bcea53ca-527b-486"
+        prod: "https://login.microsoftonline.com/bcea53ca-527b-486"
       discoURL:
       NameIDPolicy: urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified
       simplesaml.nameidattribute: email
